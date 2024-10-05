@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const authMiddleware = (req, res, next) => {
-  const token = req.header('Authorization');
+  const token = req.header('Authorization')?.split(' ')[1]; // Get the token from the header
 
   if (!token) {
     return res.status(401).json({ msg: 'No token, authorization denied' });
