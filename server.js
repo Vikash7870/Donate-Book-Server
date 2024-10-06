@@ -25,13 +25,14 @@ app.use('/api/books', bookRoutes);
 
 // Serve static assets from React frontend
 const __dirname = path.resolve();
-app.use(express.static(path.join(__dirname, '/frontend/build')));
+app.use(express.static(path.join(__dirname, 'frontend', 'build')));
 
-// Catch-all for any route to serve the React app
+// Catch-all to serve the React app for any unknown route
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
 });
 
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
