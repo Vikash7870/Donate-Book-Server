@@ -1,38 +1,37 @@
 import express from 'express';
+import path from 'path'; // Import path to serve React files
 import mongoose from 'mongoose';
 import cors from 'cors';
-import path from 'path';  // Import path module
+import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import bookRoutes from './routes/books.js';
-import dotenv from 'dotenv';
 
 dotenv.config();
 
 const app = express();
-app.use(cors()); // Enable CORS for all routes
-app.use(express.json()); // Parse incoming JSON requests
+app.use(cors());
+app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
-const MONGODB_URI = process.env.MONGODB_URI; // Ensure this variable is set in your .env file
+const MONGODB_URI = process.env.MONGODB_URI;
 
-// Connect to MongoDB
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log('MongoDB connection error:', err));
+  .catch((err) => console.log('MongoDB connection error:', err));
 
-// Define routes
-app.use('/api/auth', authRoutes); // Authentication routes
-app.use('/api/books', bookRoutes); // Book-related routes
+// API Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/books', bookRoutes);
 
-// Serve static files from the React frontend app
-app.use(express.static(path.join(path.resolve(), 'build')));
+// Serve static assets from React frontend
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, '/frontend/build')));
 
-// Handle React routing, return all requests to React app
+// Catch-all for any route to serve the React app
 app.get('*', (req, res) => {
-  res.sendFile(path.join(path.resolve(), 'build', 'index.html'));
+  res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
 });
 
-// Start the server
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
